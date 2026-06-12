@@ -14,7 +14,7 @@
     "package-linux": "yarn build && electron-builder build --linux",
     "package-mac": "yarn build && electron-builder build --mac",
     "package-win": "yarn build && electron-builder build --win --x64",
-    "postinstall": "node internals/scripts/CheckNativeDep.js && electron-builder install-app-deps",
+    "postinstall": "electron-builder install-app-deps",
     "prestart": "yarn build",
     "start": "cross-env NODE_ENV=production electron ./app/",
     "start-server-dev": "cross-env NODE_ENV=development NODE_OPTIONS=--openssl-legacy-provider node --experimental-worker --trace-warnings ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
