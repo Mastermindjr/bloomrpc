@@ -198,7 +198,7 @@ module.exports = merge.smart(baseConfig, {
     }),
   ],
 
-  externals: ['grpc'],
+  externals: ['@grpc/grpc-js', '@grpc/proto-loader'],
   node: {
     __dirname: false,
     __filename: false

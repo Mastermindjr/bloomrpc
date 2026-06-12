@@ -26,7 +26,7 @@ module.exports = merge.smart(baseConfig, {
     'app': './app/index',
     'about': './app/about/about-window-renderer'
   },
-  externals: ['grpc'],
+  externals: ['@grpc/grpc-js', '@grpc/proto-loader'],
 
   output: {
     path: path.join(__dirname, 'app/dist'),

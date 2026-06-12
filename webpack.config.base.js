@@ -30,7 +30,7 @@ function filterDepWithoutEntryPoints(dep) {
 
 module.exports = {
   externals: [
-    ...Object.keys(appDep.externals || {}),
+    ...(appDep.externals || []),
     ...Object.keys(pkgDep.possibleExternals || {}).filter(filterDepWithoutEntryPoints)
   ],
 

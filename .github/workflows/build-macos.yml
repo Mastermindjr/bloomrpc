@@ -1,0 +1,39 @@
+name: Build macOS (Apple Silicon + Intel)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [apple-silicon]
+
+jobs:
+  build:
+    # macos-latest runners are Apple Silicon (arm64) since macos-14
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: yarn install --ignore-engines --network-timeout 600000
+
+      - name: Build bundles
+        run: yarn build
+
+      - name: Package for macOS (arm64 + x64)
+        run: npx electron-builder build --mac --publish never
+        env:
+          # No Apple certificates in CI: skip identity lookup, the
+          # afterSign hook (internals/scripts/MacAdhocSign.js) applies an
+          # ad-hoc signature so the arm64 build can launch.
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: BloomRPC-macOS
+          path: |
+            release/*.dmg
+            release/*.zip

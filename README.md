@@ -25,6 +25,25 @@ When BloomRPC was first released in Dec 2018, there were very few GUI gRPC tools
 
 Check out the list of current gRPC tools at [awesome-grpc](https://github.com/grpc-ecosystem/awesome-grpc#tools).
 
+## Apple Silicon (arm64) fork
+
+This fork removes the native `grpc` C++ module (replaced by the pure-JS
+`@grpc/grpc-js`, with the parts of `bloomrpc-mock` BloomRPC used vendored in
+`app/vendor/bloomrpc-mock`) and upgrades Electron to 13.6.9 so the app can be
+packaged natively for Apple Silicon — no Rosetta 2 required.
+
+Build it on a Mac with:
+
+```bash
+yarn install --ignore-engines
+yarn package-mac        # produces release/BloomRPC-*-arm64.dmg (and x64)
+```
+
+or trigger the `Build macOS (Apple Silicon + Intel)` GitHub Actions workflow,
+which packages arm64 + x64 dmg/zip on a macOS runner and uploads them as
+artifacts. CI builds are ad-hoc signed; after downloading, clear the
+quarantine flag once: `xattr -dr com.apple.quarantine /Applications/BloomRPC.app`.
+
 ##
 
 So long, and thanks for all the fish

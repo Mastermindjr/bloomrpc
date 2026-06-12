@@ -1,11 +1,13 @@
 import {remote} from 'electron';
-import {fromFileName, mockRequestMethods, Proto, walkServices} from 'bloomrpc-mock';
+import {fromFileName, mockRequestMethods, Proto, walkServices} from '../vendor/bloomrpc-mock';
 import * as path from 'path';
 import {ProtoFile, ProtoService} from './protobuf';
-import {Service} from 'protobufjs';
+import {Root, Service} from 'protobufjs';
 import {Client} from 'grpc-reflection-js';
-import {credentials} from '@grpc/grpc-js';
-import * as grpc from 'grpc';
+import {credentials, GrpcObject, loadPackageDefinition} from '@grpc/grpc-js';
+import {loadFileDescriptorSetFromBuffer} from '@grpc/proto-loader';
+// @ts-ignore
+import * as descriptor from 'protobufjs/ext/descriptor';
 import isURL from 'validator/lib/isURL';
 
 const commonProtosPath = [
@@ -96,7 +98,7 @@ export async function loadProtoFromReflection(host: string, onProtoUploaded?: On
         fileName: root.files[root.files.length - 1],
         filePath: host,
         protoText: "proto text not supported in gRPC reflection",
-        ast: grpc.loadObject(root),
+        ast: loadObjectFromRoot(root),
         root: root
       }
     });
@@ -193,6 +195,25 @@ function parseServices(proto: Proto) {
   });
 
   return services;
+}
+
+/**
+ * Build gRPC client constructors from a protobufjs Root.
+ *
+ * Replacement for the legacy native `grpc.loadObject(root)`: the Root is
+ * serialised to a FileDescriptorSet and loaded back through @grpc/proto-loader.
+ */
+function loadObjectFromRoot(root: Root): GrpcObject {
+  const descriptorSet = (root as any).toDescriptor('proto3');
+  const buffer = Buffer.from(descriptor.FileDescriptorSet.encode(descriptorSet).finish());
+  const packageDefinition = loadFileDescriptorSetFromBuffer(buffer, {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true,
+  });
+  return loadPackageDefinition(packageDefinition);
 }
 
 export function importResolvePath(): Promise<string> {

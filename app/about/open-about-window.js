@@ -20,7 +20,9 @@ module.exports = function openAboutWindow(parentWindow) {
         icon: icon,
         parent: parentWindow,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true
         }
     }
 
