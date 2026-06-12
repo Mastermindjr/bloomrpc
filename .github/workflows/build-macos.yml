@@ -17,7 +17,14 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: yarn install --ignore-engines --network-timeout 600000
+        shell: bash
+        run: |
+          set -o pipefail
+          yarn install --ignore-engines --network-timeout 600000 2>&1 | tee install.log || {
+            echo "::error title=yarn install failed::node $(node -v), yarn $(yarn -v)"
+            tail -n 9 install.log | while IFS= read -r line; do echo "::error::${line}"; done
+            exit 1
+          }
 
       - name: Build bundles
         run: yarn build
