@@ -61,6 +61,7 @@
     "afterSign": "internals/scripts/MacAdhocSign.js",
     "mac": {
       "category": "public.app-category.developer-tools",
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
       "target": [
         {
           "target": "dmg",
@@ -68,6 +69,10 @@
         },
         {
           "target": "zip",
+          "arch": ["arm64", "x64"]
+        },
+        {
+          "target": "dir",
           "arch": ["arm64", "x64"]
         }
       ]
@@ -88,6 +93,7 @@
       ]
     },
     "win": {
+      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}",
       "target": [
         "nsis"
       ]
